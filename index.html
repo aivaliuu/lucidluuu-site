@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUCID — Lucy Lu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07060f;
+      --purple: #7b5ea7;
+      --violet: #a78bfa;
+      --blue: #312e81;
+      --glow: rgba(167, 139, 250, 0.15);
+      --text: #e2d9f3;
+      --muted: #9d8ec4;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ── Canvas Stars ── */
+    #stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── Gradient blobs ── */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob-1 { width: 600px; height: 600px; background: #5b21b6; top: -200px; left: -200px; animation: drift 20s ease-in-out infinite alternate; }
+    .blob-2 { width: 500px; height: 500px; background: #1e1b4b; bottom: -150px; right: -150px; animation: drift 25s ease-in-out infinite alternate-reverse; }
+    .blob-3 { width: 400px; height: 400px; background: #7c3aed; top: 40%; left: 50%; transform: translateX(-50%); animation: drift 18s ease-in-out infinite alternate; }
+
+    @keyframes drift {
+      from { transform: translate(0, 0); }
+      to   { transform: translate(40px, 30px); }
+    }
+
+    /* ── Sections ── */
+    section { position: relative; z-index: 1; }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .avatar-ring {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa, #4f46e5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 40px rgba(167,139,250,0.4);
+      animation: pulse-ring 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0%, 100% { box-shadow: 0 0 40px rgba(167,139,250,0.4); }
+      50%       { box-shadow: 0 0 70px rgba(167,139,250,0.7); }
+    }
+
+    .avatar-inner {
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--violet);
+      margin-bottom: 0.75rem;
+      opacity: 0.8;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4rem, 12vw, 9rem);
+      font-weight: 300;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #e2d9f3 30%, #a78bfa 70%, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1rem, 3vw, 1.4rem);
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      max-width: 400px;
+    }
+
+    .hero-pills {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .pill {
+      background: rgba(167,139,250,0.08);
+      border: 1px solid rgba(167,139,250,0.2);
+      border-radius: 999px;
+      padding: 0.35rem 1rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      color: var(--violet);
+      backdrop-filter: blur(4px);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--muted);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      opacity: 0.5;
+      animation: bounce 2.5s ease-in-out infinite;
+    }
+    .scroll-hint::after { content: '↓'; font-size: 1rem; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ── About ── */
+    #about {
+      padding: 6rem 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--violet);
+      margin-bottom: 1.5rem;
+      opacity: 0.7;
+    }
+
+    #about h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    #about p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 1rem;
+    }
+
+    /* ── Cards / Features ── */
+    #features {
+      padding: 4rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(167,139,250,0.12);
+      border-radius: 1.5rem;
+      padding: 2rem 1.75rem;
+      backdrop-filter: blur(8px);
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      border-color: rgba(167,139,250,0.35);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(124,58,237,0.15);
+    }
+
+    .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+
+    .card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .card p {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    /* ── Links ── */
+    #links {
+      padding: 6rem 2rem;
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    #links h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 300;
+      margin-bottom: 2.5rem;
+      color: var(--text);
+    }
+
+    .link-list { display: flex; flex-direction: column; gap: 1rem; }
+
+    .link-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(167,139,250,0.15);
+      border-radius: 1rem;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      transition: background 0.3s, border-color 0.3s, transform 0.2s;
+      backdrop-filter: blur(6px);
+    }
+
+    .link-btn:hover {
+      background: rgba(167,139,250,0.1);
+      border-color: rgba(167,139,250,0.4);
+      transform: translateX(4px);
+    }
+
+    .link-btn .link-icon { font-size: 1.3rem; }
+    .link-btn .link-arrow { opacity: 0.4; font-size: 0.8rem; }
+
+    /* ── Quote ── */
+    #quote {
+      padding: 6rem 2rem;
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    blockquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-weight: 300;
+      line-height: 1.4;
+      color: var(--text);
+      opacity: 0.85;
+    }
+
+    blockquote::before { content: '"'; color: var(--violet); font-size: 4rem; line-height: 0; vertical-align: -0.5rem; margin-right: 0.2rem; }
+    blockquote::after  { content: '"'; color: var(--violet); font-size: 4rem; line-height: 0; vertical-align: -0.5rem; margin-left: 0.2rem; }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 3rem 2rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      opacity: 0.4;
+      text-transform: uppercase;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--violet), transparent);
+      margin: 3rem auto;
+    }
+
+    /* ── Fade-in on scroll ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="stars"></canvas>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="avatar-ring">
+      <div class="avatar-inner">💫</div>
+    </div>
+    <p class="hero-eyebrow">@lucidluuu</p>
+    <h1>LUCID</h1>
+    <p class="hero-tagline">Only real in your dreams.</p>
+    <div class="hero-pills">
+      <span class="pill">🩺 PA</span>
+      <span class="pill">🎧 Artist</span>
+      <span class="pill">😈 Fitness</span>
+      <span class="pill">💭 Dreamer</span>
+    </div>
+    <div class="scroll-hint">scroll</div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="fade-in">
+    <p class="section-label">About</p>
+    <h2>Healer by day.<br/>Artist by night.</h2>
+    <p>Lucy Lu is a Physician Assistant, artist, and fitness enthusiast living somewhere between the waking world and a dream. She moves through medicine with precision, through music with feeling, and through the gym with intention.</p>
+    <p>If you've found her, consider yourself lucky — she only fully exists in the spaces between sleep.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FEATURES -->
+  <section id="features" class="fade-in">
+    <p class="section-label" style="text-align:center;">What she does</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🩺</div>
+        <h3>Medicine</h3>
+        <p>Practicing as a Physician Assistant — bringing care, calm, and clinical precision to every patient encounter.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎧</div>
+        <h3>Art & Music</h3>
+        <p>Creating in the in-between spaces. Sound as a medium, emotion as the message. Expect the unexpected.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">😈</div>
+        <h3>Fitness</h3>
+        <p>The body is a canvas too. Discipline, strength, and the quiet satisfaction of becoming.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- QUOTE -->
+  <section id="quote" class="fade-in">
+    <blockquote>Only real in your dreams.</blockquote>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- LINKS -->
+  <section id="links" class="fade-in">
+    <p class="section-label">Find me</p>
+    <h2>Links</h2>
+    <div class="link-list">
+      <a class="link-btn" href="https://www.instagram.com/lucidluuu/" target="_blank" rel="noopener">
+        <span class="link-icon">📸</span>
+        <span>Instagram @lucidluuu</span>
+        <span class="link-arrow">→</span>
+      </a>
+      <a class="link-btn" href="#" target="_blank" rel="noopener">
+        <span class="link-icon">🎵</span>
+        <span>Music / Art</span>
+        <span class="link-arrow">→</span>
+      </a>
+      <a class="link-btn" href="#" target="_blank" rel="noopener">
+        <span class="link-icon">💪</span>
+        <span>Fitness Content</span>
+        <span class="link-arrow">→</span>
+      </a>
+      <a class="link-btn" href="mailto:hello@lucidluuu.com">
+        <span class="link-icon">✉️</span>
+        <span>Collabs & Inquiries</span>
+        <span class="link-arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <footer>© 2026 Lucy Lu · @lucidluuu · Only real in your dreams</footer>
+
+  <script>
+    // ── Star canvas ──
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function initStars() {
+      stars = Array.from({ length: 180 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.2 + 0.2,
+        a: Math.random(),
+        speed: Math.random() * 0.003 + 0.001,
+        phase: Math.random() * Math.PI * 2,
+      }));
+    }
+
+    function drawStars(t) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const s of stars) {
+        const alpha = s.a * (0.5 + 0.5 * Math.sin(t * s.speed + s.phase));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(167,139,250,${alpha})`;
+        ctx.fill();
+      }
+      requestAnimationFrame(drawStars);
+    }
+
+    resize();
+    initStars();
+    requestAnimationFrame(drawStars);
+    window.addEventListener('resize', () => { resize(); initStars(); });
+
+    // ── Fade-in on scroll ──
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.15 }
+    );
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
